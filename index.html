@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sevenine — Story: свободные места</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0A0D13;--line:rgba(255,255,255,.10);--txt:#E8ECF2;--dim:#8A93A2;--blue:#007AFF;--blue-dark:#0062CC}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:var(--ink);color:var(--txt);-webkit-font-smoothing:antialiased}
+  header{position:sticky;top:0;z-index:10;background:rgba(10,13,19,.84);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:18px 26px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .brand{font-weight:800;letter-spacing:5px;font-size:14px}.brand i{font-style:normal;color:var(--blue)}
+  .kicker{font-size:12px;color:var(--dim);flex:1;min-width:150px}
+  .btn{border:0;border-radius:980px;padding:12px 22px;font:700 14px 'Plus Jakarta Sans',sans-serif;cursor:pointer;background:var(--blue);color:#fff}
+  .btn:hover{background:var(--blue-dark)}
+  .btn.ghost{background:rgba(255,255,255,.06);color:var(--txt);border:1px solid var(--line)}
+  .btn.ghost:hover{background:rgba(255,255,255,.12)}
+  .stage{max-width:1040px;margin:0 auto;padding:40px 26px 90px;display:grid;grid-template-columns:344px 1fr;gap:44px;align-items:start}
+  @media(max-width:780px){.stage{grid-template-columns:1fr;gap:28px;padding-top:26px}}
+  .sticky{position:sticky;top:96px}
+  canvas{width:100%;height:auto;display:block;border-radius:26px;background:#fff;box-shadow:0 40px 90px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.08)}
+  .panel h1{font-size:26px;font-weight:800;letter-spacing:-.6px;margin-bottom:8px}
+  .panel .lede{font-size:14px;line-height:1.6;color:var(--dim);margin-bottom:24px;max-width:46ch}
+  .grp{border-top:1px solid var(--line);padding:18px 0;display:flex;align-items:center;justify-content:space-between;gap:20px}
+  .grp.col{display:block}
+  .grp.col label{display:block;margin-bottom:12px}
+  .grp label{font-size:14px;font-weight:600}
+  .grp .sub{display:block;font-size:12px;color:var(--dim);font-weight:400;margin-top:3px}
+  .step{display:flex;align-items:center;gap:14px}
+  .step button{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--txt);font:700 18px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+  .step button:hover{background:var(--blue);border-color:var(--blue);color:#fff}
+  .step b{min-width:24px;text-align:center;font-size:18px;font-weight:800}
+
+  .themes{display:flex;flex-wrap:wrap;gap:10px}
+  .sw{width:54px;height:54px;border-radius:16px;border:2px solid transparent;cursor:pointer;padding:0;position:relative;overflow:hidden;box-shadow:0 0 0 1px var(--line) inset}
+  .sw i{position:absolute;right:7px;bottom:7px;width:14px;height:14px;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,.18)}
+  .sw.on{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,122,255,.28)}
+  .swname{font-size:12px;color:var(--dim);margin-top:10px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--txt);border-radius:980px;padding:10px 16px;font:600 13px 'Plus Jakarta Sans',sans-serif;cursor:pointer}
+  .chip:hover{background:rgba(255,255,255,.09)}
+  .chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+
+  .fields{border-top:1px solid var(--line);padding-top:18px;display:grid;gap:14px}
+  .fields div{display:grid;gap:6px}
+  .fields span{font-size:12px;color:var(--dim)}
+  input{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:11px 13px;color:var(--txt);font:500 14px 'Plus Jakarta Sans',sans-serif}
+  input:focus{outline:2px solid var(--blue);outline-offset:1px;border-color:transparent}
+  input[type=time]{width:132px;color-scheme:dark}
+  #fDaysCustom{margin-top:10px;width:100%}
+  #levels{margin-top:8px}
+  .lvlhint{font-size:12px;line-height:1.55;color:var(--dim);margin-top:10px;min-height:34px}
+  .lvlhint b{color:var(--txt);font-weight:700}
+  #fCourse,#fAge{margin-top:12px;width:100%}
+  #ageHint{min-height:0}
+  .hint{font-size:12px;color:#5C6474;line-height:1.6;margin-top:24px}
+  textarea{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:11px 13px;
+    color:var(--txt);font:500 14px 'Plus Jakarta Sans',sans-serif;min-height:92px;resize:vertical;width:100%}
+  textarea:focus{outline:2px solid var(--blue);outline-offset:1px;border-color:transparent}
+  [hidden]{display:none!important}
+  .acts{display:flex;gap:10px}
+
+  /* --- главная: выбор формата --- */
+  .home{max-width:1040px;margin:0 auto;padding:44px 26px 90px}
+  .home h1{font-size:30px;font-weight:800;letter-spacing:-.7px;margin-bottom:8px}
+  .home .sub{color:var(--dim);font-size:14px;margin-bottom:32px}
+  .fcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:22px}
+  .fcard{display:block;text-align:left;background:rgba(255,255,255,.03);border:1px solid var(--line);
+    border-radius:22px;padding:16px;cursor:pointer;color:var(--txt);font-family:inherit}
+  .fcard:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.22)}
+  .fthumb{display:block;border-radius:14px;overflow:hidden;background:#0f141c;aspect-ratio:9/16}
+  .fthumb img{width:100%;display:block}
+  .ftitle{display:block;font-size:16px;font-weight:700;margin:14px 0 5px}
+  .fdesc{display:block;font-size:12.5px;line-height:1.55;color:var(--dim)}
+
+  /* --- фото-сторис --- */
+  .uploader{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .uploader .btn{display:inline-block}
+  .fname{font-size:12px;color:var(--dim);word-break:break-all}
+  input[type=range]{width:100%;accent-color:var(--blue);background:none;border:0;padding:0}
+  input[type=range]:focus{outline:none}
+  #pPreview.drop{outline:3px dashed var(--blue);outline-offset:6px}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">SEVE<i>NINE</i></div>
+  <button class="btn ghost" id="back" hidden>← Форматы</button>
+  <div class="kicker" id="kicker">Форматы сторис · 1080 × 1920</div>
+  <div class="acts" id="actsSeats" hidden>
+    <button class="btn ghost" id="dlAll">Все темы</button>
+    <button class="btn" id="dl">Скачать PNG</button>
+  </div>
+  <div class="acts" id="actsPhoto" hidden>
+    <button class="btn" id="dlPhoto">Скачать PNG</button>
+  </div>
+</header>
+
+<div class="home" id="homeView" hidden>
+  <h1>Сторис Sevenine</h1>
+  <p class="sub">Выберите формат — дальше всё заполняется в пару кликов.</p>
+  <div class="fcards">
+    <button class="fcard" data-go="seats">
+      <span class="fthumb"><img id="thumbSeats" alt=""></span>
+      <span class="ftitle">Свободные места</span>
+      <span class="fdesc">Сетка мест, расписание и цена. Пять тем и отдельное состояние «мест нет» с листом ожидания.</span>
+    </button>
+    <button class="fcard" data-go="photo">
+      <span class="fthumb"><img id="thumbPhoto" alt=""></span>
+      <span class="ftitle">Фото-сторис</span>
+      <span class="fdesc">Ваше фото на весь экран, фирменный градиент снизу, логотип и текст в стиле Sevenine.</span>
+    </button>
+  </div>
+</div>
+
+<div class="stage" id="seatsView" hidden>
+  <div class="sticky"><canvas id="preview" width="432" height="768"></canvas></div>
+
+  <div class="panel">
+    <h1>Сколько мест осталось</h1>
+    <p class="lede">Выберите тему, дни и время начала — окончание урока считается само (90 минут).</p>
+
+    <div class="grp col">
+      <label>Тема<span class="sub" id="themeName">Светлая</span></label>
+      <div class="themes" id="themes"></div>
+    </div>
+
+    <div class="grp">
+      <label>Свободно<span class="sub">Подсвеченные места в сетке</span></label>
+      <div class="step"><button data-f="-1">−</button><b id="freeVal">2</b><button data-f="1">+</button></div>
+    </div>
+    <div class="grp">
+      <label>Всего мест<span class="sub">Максимум в группе Sevenine — 8</span></label>
+      <div class="step"><button data-t="-1">−</button><b id="totalVal">8</b><button data-t="1">+</button></div>
+    </div>
+
+    <div class="grp">
+      <label>Лист ожидания<span class="sub">Показывается, когда мест нет</span></label>
+      <div class="step"><button data-w="-1">−</button><b id="waitVal">0</b><button data-w="1">+</button></div>
+    </div>
+
+    <div class="grp col">
+      <label>Дни<span class="sub">Готовые расписания</span></label>
+      <div class="chips" id="days"></div>
+      <input id="fDaysCustom" placeholder="например: пн, чт" hidden>
+    </div>
+
+    <div class="grp">
+      <label>Начало урока<span class="sub" id="endHint">90 минут → 17:30</span></label>
+      <input type="time" id="fTime" value="16:00" step="900">
+    </div>
+
+    <div class="grp col">
+      <label>Курс<span class="sub">Направление и уровень</span></label>
+      <div class="chips" id="fams"></div>
+      <div class="chips" id="levels"></div>
+      <p class="lvlhint" id="lvlHint"></p>
+      <input id="fCourse" value="General English — A1 Beginner">
+    </div>
+
+    <div class="grp col">
+      <label>Возраст<span class="sub">Подзаголовок меняется сам</span></label>
+      <div class="chips" id="ages"></div>
+      <p class="lvlhint" id="ageHint"></p>
+      <input id="fAge" value="12–18 лет">
+    </div>
+
+    <div class="fields">
+      <div><span>Стоимость</span><input id="fPrice" value="1 090 000 сум" list="prices"></div>
+      <div><span>Период</span><input id="fPer" value="за 4 недели" list="pers"></div>
+    </div>
+
+    <datalist id="prices"><option>890 000 сум</option><option>990 000 сум</option><option>1 090 000 сум</option><option>1 290 000 сум</option></datalist>
+    <datalist id="pers"><option>за 4 недели</option><option>в месяц</option><option>за курс</option></datalist>
+
+    <p class="hint">«Все темы» скачивает по одному PNG на каждую тему — удобно, чтобы выбрать глазами.</p>
+  </div>
+</div>
+
+<div class="stage" id="photoView" hidden>
+  <div class="sticky"><canvas id="pPreview" width="432" height="768"></canvas></div>
+
+  <div class="panel">
+    <h1>Фото-сторис</h1>
+    <p class="lede">Загрузите фото — сверху ляжет фирменный градиент, логотип и текст Sevenine.</p>
+
+    <div class="grp col">
+      <label>Фото<span class="sub">JPG или PNG; вертикальное подходит лучше всего</span></label>
+      <div class="uploader">
+        <label class="btn" for="pFile">Загрузить фото</label>
+        <input type="file" id="pFile" accept="image/*" hidden>
+        <span class="fname" id="pName">файл не выбран</span>
+      </div>
+    </div>
+
+    <div class="grp col">
+      <label>Кадрирование<span class="sub" id="pFocusHint">Сдвиг фото по вертикали</span></label>
+      <input type="range" id="pFocus" min="0" max="100" value="50">
+    </div>
+
+    <div class="grp col">
+      <label>Тон градиента<span class="sub" id="pTintName">Синий</span></label>
+      <div class="chips" id="pTints"></div>
+    </div>
+
+    <div class="grp col">
+      <label>Затемнение<span class="sub" id="pScrimHint">70%</span></label>
+      <input type="range" id="pScrim" min="20" max="100" value="70">
+    </div>
+
+    <div class="fields">
+      <div><span>Надзаголовок — необязательно</span><input id="pKicker" value="НАБОР ОТКРЫТ"></div>
+      <div><span>Заголовок — Enter переносит строку</span><textarea id="pHead">Английский, который остаётся с ребёнком</textarea></div>
+      <div><span>Подпись — необязательно</span><input id="pSub" value="Первый урок — бесплатно"></div>
+    </div>
+
+    <p class="hint">Фото можно просто перетащить на превью слева.</p>
+  </div>
+</div>
+
+<script>
+const W=1080,H=1920,PAD=84;
+const PHONE='998 78 113 81 11', HANDLE='@sevenineuz';
+const LESSON_MIN=90;
+
+const COURSES=[
+  {id:'kids', label:'Kids', defaultAge:'6–12 лет', levels:[
+    {id:'k1', chip:'Level 1', v:'Kids Level 1 — Pre-A1 → A1', cefr:'Pre-A1 to A1',
+     desc:'Introduction to simple sentence structures and core vocabulary'},
+    {id:'k2', chip:'Level 2', v:'Kids Level 2 — A1', cefr:'A1',
+     desc:'Basic everyday phrases, short dialogues, and fundamental grammar'},
+    {id:'k3', chip:'Level 3', v:'Kids Level 3 — A1+', cefr:'A1+',
+     desc:'Expanded vocabulary, simple storytelling, and confident short-form communication'},
+    {id:'k4', chip:'Level 4', v:'Kids Level 4 — A1 → A2', cefr:'A1 moving toward A2',
+     desc:'Longer reading texts and increased grammatical accuracy'}
+  ]},
+  {id:'ge', label:'General English', levels:[
+    {id:'a1',     chip:'A1',  v:'General English — A1 Beginner',            cefr:'A1 Beginner'},
+    {id:'a2',     chip:'A2',  v:'General English — A2 Elementary',          cefr:'A2 Elementary'},
+    {id:'b1',     chip:'B1',  v:'General English — B1 Pre-intermediate',    cefr:'B1 Pre-intermediate'},
+    {id:'b1plus', chip:'B1+', v:'General English — B1+ Intermediate',       cefr:'B1+ Intermediate'},
+    {id:'b2',     chip:'B2',  v:'General English — B2 Upper-intermediate',  cefr:'B2 Upper-intermediate'}
+  ]},
+  {id:'ielts', label:'IELTS', levels:[
+    {id:'prep', chip:'Подготовка', v:'IELTS Preparation', cefr:'IELTS'}
+  ]}
+];
+
+const AGES=[
+  {id:'a612',  chip:'6–12',  v:'6–12 лет',  lede:'Английский для детей 6–12 лет'},
+  {id:'a1218', chip:'12–18', v:'12–18 лет', lede:'Английский для подростков 12–18 лет'},
+  {id:'a18',   chip:'18+',   v:'18+',       lede:'Английский для взрослых'}
+];
+
+/* у трёх обычных групп — своя фраза; свой возраст показываем как есть */
+function ledeFor(a){
+  const t=String(a).trim();
+  if(!t) return '';
+  const p=AGES.find(x=>x.v===t);
+  return p?p.lede:t;
+}
+
+const DAY_PRESETS=[
+  {id:'mwf', label:'пн / ср / пт', v:'пн, ср, пт'},
+  {id:'tts', label:'вт / чт / сб', v:'вт, чт, сб'},
+  {id:'we',  label:'сб / вс',      v:'сб, вс'},
+  {id:'own', label:'Свои дни',     v:null}
+];
+
+/* ---------- темы ---------- */
+const THEMES={
+  light:{
+    name:'Светлая',
+    bg:[[0,'#FFFFFF'],[.55,'#F7F9FC'],[1,'#E9EFF7']],
+    glow:'0,122,255', glowA:.16, glow2A:.10, grain:.55,
+    ink:'#0B0D12', body:'#1C1C1E', mute:'#8A8F98',
+    rule:'rgba(15,23,42,0.09)', divider:'rgba(15,23,42,0.07)',
+    card:'#FFFFFF', cardStroke:'rgba(15,23,42,0.06)', cardShadow:'rgba(16,24,40,0.10)',
+    accent:'#007AFF', accentSoft:'rgba(0,122,255,0.10)', accentShadow:'rgba(0,90,200,0.22)',
+    seatGlow:'rgba(0,122,255,0.42)', seatOn:'#007AFF', seatOff:'#F0F2F6',
+    figOn:'#FFFFFF', figOff:'#D3D7DE', legendOff:'#DFE3E9',
+    hl:'#007AFF', ctaBg:'#007AFF', ctaText:'#FFFFFF',
+    hot:'#FF9500', hotText:'#3A2400', hotGlow:'rgba(255,149,0,0.42)'
+  },
+  dark:{
+    name:'Тёмная',
+    bg:[[0,'#0B0F17'],[.55,'#121826'],[1,'#090C12']],
+    glow:'10,132,255', glowA:.22, glow2A:.14, grain:.30,
+    ink:'#FFFFFF', body:'#E9EDF4', mute:'#8A93A2',
+    rule:'rgba(255,255,255,0.10)', divider:'rgba(255,255,255,0.08)',
+    card:'#161C27', cardStroke:'rgba(255,255,255,0.08)', cardShadow:'rgba(0,0,0,0.45)',
+    accent:'#0A84FF', accentSoft:'rgba(10,132,255,0.16)', accentShadow:'rgba(0,60,150,0.55)',
+    seatGlow:'rgba(10,132,255,0.50)', seatOn:'#0A84FF', seatOff:'#212936',
+    figOn:'#FFFFFF', figOff:'#3B4553', legendOff:'#2C3441',
+    hl:'#0A84FF', ctaBg:'#0A84FF', ctaText:'#FFFFFF',
+    hot:'#FF9F0A', hotText:'#2B1A00', hotGlow:'rgba(255,159,10,0.50)'
+  },
+  gradient:{
+    name:'Градиент',
+    bg:[[0,'#1BA8E0'],[.5,'#2680C4'],[1,'#2D6DAE']],
+    glow:'255,255,255', glowA:.20, glow2A:.10, grain:.34,
+    ink:'#FFFFFF', body:'#FFFFFF', mute:'rgba(255,255,255,0.74)',
+    rule:'rgba(255,255,255,0.24)', divider:'rgba(255,255,255,0.18)',
+    card:'rgba(255,255,255,0.14)', cardStroke:'rgba(255,255,255,0.26)', cardShadow:'rgba(12,50,90,0.28)',
+    accent:'#FFFFFF', accentSoft:'rgba(255,255,255,0.20)', accentShadow:'rgba(10,45,85,0.30)',
+    seatGlow:'rgba(255,255,255,0.45)', seatOn:'#FFFFFF', seatOff:'rgba(9,58,105,0.26)',
+    figOn:'#2680C4', figOff:'rgba(255,255,255,0.40)', legendOff:'rgba(9,58,105,0.30)',
+    hl:'#FFFFFF', ctaBg:'#FFFFFF', ctaText:'#1F72B4',
+    hot:'#FFD166', hotText:'#4A3200', hotGlow:'rgba(255,209,102,0.50)'
+  },
+  cream:{
+    name:'Кремовая',
+    bg:[[0,'#FEFCF8'],[.55,'#F7F1E6'],[1,'#EEE3D2']],
+    glow:'27,145,198', glowA:.13, glow2A:.09, grain:.60,
+    ink:'#17110A', body:'#2A2118', mute:'#8E8171',
+    rule:'rgba(40,28,14,0.12)', divider:'rgba(40,28,14,0.09)',
+    card:'#FFFFFF', cardStroke:'rgba(40,28,14,0.07)', cardShadow:'rgba(60,42,20,0.12)',
+    accent:'#1B91C6', accentSoft:'rgba(27,145,198,0.12)', accentShadow:'rgba(20,100,140,0.26)',
+    seatGlow:'rgba(27,145,198,0.40)', seatOn:'#1B91C6', seatOff:'#EFE6D5',
+    figOn:'#FFFFFF', figOff:'#C7B69A', legendOff:'#DFD2BB',
+    hl:'#1B91C6', ctaBg:'#1B91C6', ctaText:'#FFFFFF',
+    hot:'#E07A1F', hotText:'#FFF6EA', hotGlow:'rgba(224,122,31,0.40)'
+  },
+  midnight:{
+    name:'Полночь',
+    bg:[[0,'#0C1B33'],[.55,'#12294A'],[1,'#081527']],
+    glow:'75,182,228', glowA:.20, glow2A:.13, grain:.30,
+    ink:'#FFFFFF', body:'#E6EEF7', mute:'#8095AE',
+    rule:'rgba(255,255,255,0.12)', divider:'rgba(255,255,255,0.09)',
+    card:'#132743', cardStroke:'rgba(255,255,255,0.09)', cardShadow:'rgba(0,10,30,0.5)',
+    accent:'#4BB6E4', accentSoft:'rgba(75,182,228,0.16)', accentShadow:'rgba(20,90,140,0.5)',
+    seatGlow:'rgba(75,182,228,0.45)', seatOn:'#4BB6E4', seatOff:'#1B3253',
+    figOn:'#0C1B33', figOff:'#2F4C71', legendOff:'#25405F',
+    hl:'#4BB6E4', ctaBg:'#4BB6E4', ctaText:'#08182C',
+    hot:'#FFB020', hotText:'#2E1C00', hotGlow:'rgba(255,176,32,0.45)'
+  }
+};
+const THEME_IDS=Object.keys(THEMES);
+
+const S={theme:'light',free:2,total:8,wait:0,days:'пн, ср, пт',dayPreset:'mwf',time:'16:00',
+  fam:'ge',level:'a1',course:'General English — A1 Beginner',
+  age:'12–18 лет',price:'1 090 000 сум',per:'за 4 недели'};
+
+const off=document.createElement('canvas');off.width=W;off.height=H;
+const sctx=off.getContext('2d');
+let ctx=sctx;   /* помощники ниже рисуют в тот холст, на который указывает ctx */
+let grain=null, T=THEMES.light;
+
+function font(s,w){ctx.font=`${w} ${s}px 'Plus Jakarta Sans',-apple-system,sans-serif`;}
+function rrect(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arc(x+w-r,y+r,r,-Math.PI/2,0);
+  ctx.lineTo(x+w,y+h-r);ctx.arc(x+w-r,y+h-r,r,0,Math.PI/2);ctx.lineTo(x+r,y+h);ctx.arc(x+r,y+h-r,r,Math.PI/2,Math.PI);
+  ctx.lineTo(x,y+r);ctx.arc(x+r,y+r,r,Math.PI,-Math.PI/2);ctx.closePath();}
+function tracked(t,x,y,sp){let cx=x;for(const c of t){ctx.fillText(c,cx,y);cx+=ctx.measureText(c).width+sp;}}
+function wrap(t,mw){const ws=String(t).split(/\s+/),o=[];let l='';
+  for(const w of ws){const s=l?l+' '+w:w;if(ctx.measureText(s).width>mw&&l){o.push(l);l=w;}else l=s;}if(l)o.push(l);return o;}
+function plural(n,a,b,c){const x=n%10,y=n%100;if(x===1&&y!==11)return a;if(x>=2&&x<=4&&(y<10||y>=20))return b;return c;}
+
+function endTime(t){
+  const m=/^(\d{1,2}):(\d{2})$/.exec(String(t).trim());
+  if(!m) return '';
+  const mins=(+m[1]*60 + +m[2] + LESSON_MIN)%1440;
+  return String(Math.floor(mins/60)).padStart(2,'0')+':'+String(mins%60).padStart(2,'0');
+}
+function schedText(){
+  const e=endTime(S.time);
+  return `${S.days} — ${S.time}${e?'–'+e:''}`;
+}
+
+function card(x,y,w,h,r,accent){
+  ctx.save();
+  ctx.shadowColor=accent?T.accentShadow:T.cardShadow;
+  ctx.shadowBlur=accent?54:46;ctx.shadowOffsetY=accent?18:16;
+  rrect(x,y,w,h,r);ctx.fillStyle=accent?T.ctaBg:T.card;ctx.fill();
+  ctx.restore();
+  rrect(x,y,w,h,r);ctx.strokeStyle=accent?'rgba(255,255,255,0.10)':T.cardStroke;ctx.lineWidth=1;ctx.stroke();
+}
+function makeGrain(){const c=document.createElement('canvas');c.width=c.height=200;
+  const g=c.getContext('2d'),d=g.createImageData(200,200);
+  for(let i=0;i<d.data.length;i+=4){const v=Math.random()*255;d.data[i]=d.data[i+1]=d.data[i+2]=v;d.data[i+3]=Math.random()*22;}
+  g.putImageData(d,0,0);return c;}
+
+function render(){
+  ctx=sctx;
+  T=THEMES[S.theme]||THEMES.light;
+  const free=Math.max(0,Math.min(S.free,S.total)), taken=S.total-free, full=free===0;
+  const maxW=W-PAD*2;
+  if(!grain) grain=makeGrain();
+
+  /* фон */
+  const bg=ctx.createLinearGradient(0,0,W*0.35,H);
+  T.bg.forEach(([p,c])=>bg.addColorStop(p,c));
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  const glow=ctx.createRadialGradient(W*0.86,H*0.06,40,W*0.86,H*0.06,H*0.52);
+  glow.addColorStop(0,`rgba(${T.glow},${T.glowA})`);glow.addColorStop(1,`rgba(${T.glow},0)`);
+  ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);
+  const glow2=ctx.createRadialGradient(W*0.08,H*0.92,40,W*0.08,H*0.92,H*0.42);
+  glow2.addColorStop(0,`rgba(${T.glow},${T.glow2A})`);glow2.addColorStop(1,`rgba(${T.glow},0)`);
+  ctx.fillStyle=glow2;ctx.fillRect(0,0,W,H);
+  ctx.globalAlpha=T.grain;ctx.fillStyle=ctx.createPattern(grain,'repeat');ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;
+
+  ctx.textAlign='left';ctx.textBaseline='alphabetic';
+
+  /* шапка: логотип + статус набора */
+  font(30,800);ctx.fillStyle=T.ink;tracked('SEVENINE',PAD,258,6);
+  font(23,700);
+  const st=full?'Мест нет':'Набор открыт', stw=ctx.measureText(st).width+52;
+  rrect(W-PAD-stw,222,stw,50,25);ctx.fillStyle=full?T.hot:T.accentSoft;ctx.fill();
+  ctx.fillStyle=full?T.hotText:T.accent;ctx.fillText(st,W-PAD-stw+26,255);
+  ctx.fillStyle=T.rule;ctx.fillRect(PAD,300,maxW,1);
+
+  /* заголовок */
+  ctx.textBaseline='top';
+  font(84,800);
+  const head=full?`Все ${S.total} ${plural(S.total,'место','места','мест')} заняты`
+                 :`Осталось ${free} ${plural(free,'место','места','мест')}`;
+  const hl=wrap(head,maxW);
+  ctx.fillStyle=T.ink;hl.forEach((l,i)=>ctx.fillText(l,PAD,376+i*96));
+  let y=376+hl.length*96+16;
+
+  const lede=ledeFor(S.age);
+  if(lede){
+    font(31,500);ctx.fillStyle=T.mute;
+    const subLines=wrap(lede,maxW);
+    subLines.forEach((l,i)=>ctx.fillText(l,PAD,y+i*44));
+    y+=subLines.length*44+56;
+  }else y+=20;
+
+  /* карточка мест */
+  const cardH=306;
+  card(PAD,y,maxW,cardH,36,false);
+  const inner=maxW-72, n=S.total, gap=14;
+  const cw=Math.floor((inner-gap*(n-1))/n), ch=138;
+  let cx=PAD+36, cy=y+40;
+  for(let i=0;i<n;i++){
+    const lit=full||i>=taken;
+    if(lit){
+      ctx.save();ctx.shadowColor=full?T.hotGlow:T.seatGlow;ctx.shadowBlur=26;ctx.shadowOffsetY=8;
+      rrect(cx,cy,cw,ch,22);ctx.fillStyle=full?T.hot:T.seatOn;ctx.fill();ctx.restore();
+    }else{
+      rrect(cx,cy,cw,ch,22);ctx.fillStyle=T.seatOff;ctx.fill();
+    }
+    /* фигурка ученика */
+    const fu=Math.min(cw,ch*0.72);            /* потолок размера фигурки */
+    const mx=cx+cw/2, hr=fu*0.17, hy=cy+ch*0.36;
+    ctx.fillStyle=lit?(full?T.hotText:T.figOn):T.figOff;
+    ctx.beginPath();ctx.arc(mx,hy,hr,0,Math.PI*2);ctx.fill();
+    const bw=fu*0.52,bh=ch*0.20,bx=mx-bw/2,by=hy+hr*1.3;
+    ctx.beginPath();ctx.moveTo(bx,by+bh);ctx.quadraticCurveTo(mx,by-bh*0.95,bx+bw,by+bh);ctx.closePath();ctx.fill();
+    cx+=cw+gap;
+  }
+  /* легенда */
+  const ly=cy+ch+34;
+  font(26,600);
+  if(full){
+    rrect(PAD+36,ly+2,22,22,7);ctx.fillStyle=T.hot;ctx.fill();
+    const t1=`все ${S.total} ${plural(S.total,'место','места','мест')} заняты`;
+    ctx.fillStyle=T.hot;ctx.fillText(t1,PAD+36+34,ly);
+    if(S.wait>0){
+      const wt=` · ${S.wait} ${plural(S.wait,'человек','человека','человек')} в листе ожидания`;
+      ctx.fillStyle=T.mute;ctx.fillText(wt,PAD+36+34+ctx.measureText(t1).width,ly);
+    }
+  }else{
+    rrect(PAD+36,ly+2,22,22,7);ctx.fillStyle=T.legendOff;ctx.fill();
+    ctx.fillStyle=T.mute;ctx.fillText(`занято ${taken}`,PAD+36+34,ly);
+    const w1=ctx.measureText(`занято ${taken}`).width;
+    rrect(PAD+36+34+w1+38,ly+2,22,22,7);ctx.fillStyle=T.accent;ctx.fill();
+    ctx.fillStyle=T.accent;ctx.fillText(`свободно ${free}`,PAD+36+34+w1+38+34,ly);
+  }
+  y+=cardH+26;
+
+  /* карточка группы */
+  const rows=[
+    {k:'Возраст', v:S.age, hl:true},
+    {k:'Курс',    v:S.course},
+    {k:'Занятия', v:schedText()},
+    {k:'Стоимость', v:S.price, suf:S.per}
+  ];
+  const rowH=92, gh=rows.length*rowH+18;
+  card(PAD,y,maxW,gh,36,false);
+  rows.forEach((r,i)=>{
+    const ry=y+18+i*rowH;
+    if(i>0){ctx.fillStyle=T.divider;ctx.fillRect(PAD+36,ry,maxW-72,1);}
+    font(27,500);ctx.fillStyle=T.mute;
+    const lw=ctx.measureText(r.k).width;
+    ctx.fillText(r.k,PAD+36,ry+32);
+    let right=W-PAD-36;
+    if(r.suf){
+      font(25,500);ctx.fillStyle=T.mute;
+      const sw=ctx.measureText(r.suf).width;
+      ctx.fillText(r.suf,right-sw,ry+35);
+      right-=sw+16;
+    }
+    /* длинные названия уровней ужимаем, чтобы не наехать на подпись слева */
+    const base=r.hl?33:30, wt=r.hl?800:700, avail=right-(PAD+36+lw+28);
+    let fs=base;font(fs,wt);
+    while(ctx.measureText(r.v).width>avail&&fs>19){fs--;font(fs,wt);}
+    ctx.fillStyle=r.hl?T.hl:T.body;
+    const vw=ctx.measureText(r.v).width;
+    ctx.fillText(r.v,right-vw,ry+(r.hl?28:30)+(base-fs)*0.4);
+  });
+  y+=gh+40;
+
+  /* CTA */
+  const btnH=104;
+  card(PAD,y,maxW,btnH,40,true);
+  font(31,700);ctx.fillStyle=T.ctaText;
+  const cta=full?'Записаться в лист ожидания':'Записаться на пробный урок';
+  ctx.textAlign='center';ctx.fillText(cta,W/2,y+btnH/2-16);
+  ctx.textAlign='left';
+  y+=btnH+32;
+
+  ctx.textAlign='center';
+  if(full){
+    font(25,500);ctx.fillStyle=T.mute;
+    ctx.fillText('Сообщим первыми, как только освободится место',W/2,y);
+    y+=54;
+  }else y+=2;
+  font(26,500);ctx.fillStyle=T.mute;
+  ctx.fillText(`${PHONE}      ${HANDLE}`,W/2,y);
+  ctx.textAlign='left';
+
+  const p=document.getElementById('preview'),pc=p.getContext('2d');
+  pc.clearRect(0,0,p.width,p.height);pc.drawImage(off,0,0,p.width,p.height);
+}
+
+/* ---------- панель: темы ---------- */
+const themesEl=document.getElementById('themes');
+THEME_IDS.forEach(id=>{
+  const t=THEMES[id], b=document.createElement('button');
+  b.className='sw'+(id===S.theme?' on':'');b.dataset.theme=id;b.title=t.name;
+  b.style.background=`linear-gradient(150deg, ${t.bg.map(([p,c])=>`${c} ${Math.round(p*100)}%`).join(', ')})`;
+  b.innerHTML=`<i style="background:${t.accent}"></i>`;
+  b.addEventListener('click',()=>{
+    S.theme=id;
+    themesEl.querySelectorAll('.sw').forEach(x=>x.classList.toggle('on',x.dataset.theme===id));
+    document.getElementById('themeName').textContent=t.name;
+    render();
+  });
+  themesEl.appendChild(b);
+});
+
+/* ---------- панель: дни ---------- */
+const daysEl=document.getElementById('days'), customEl=document.getElementById('fDaysCustom');
+DAY_PRESETS.forEach(p=>{
+  const b=document.createElement('button');
+  b.className='chip'+(p.id===S.dayPreset?' on':'');b.dataset.id=p.id;b.textContent=p.label;
+  b.addEventListener('click',()=>{
+    S.dayPreset=p.id;
+    daysEl.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x.dataset.id===p.id));
+    customEl.hidden = p.id!=='own';
+    if(p.v){S.days=p.v;}
+    else{customEl.value=customEl.value||S.days;S.days=customEl.value;customEl.focus();}
+    render();
+  });
+  daysEl.appendChild(b);
+});
+customEl.addEventListener('input',e=>{S.days=e.target.value;render();});
+
+/* ---------- панель: курс и уровень ---------- */
+const famsEl=document.getElementById('fams'), levelsEl=document.getElementById('levels'),
+      courseEl=document.getElementById('fCourse');
+
+const hintEl=document.getElementById('lvlHint');
+function showHint(){
+  const l=COURSES.flatMap(f=>f.levels).find(x=>x.id===S.level);
+  hintEl.innerHTML=l?('<b>'+l.cefr+'</b>'+(l.desc?' · '+l.desc:'')):'';
+}
+function drawLevels(){
+  const fam=COURSES.find(f=>f.id===S.fam);
+  levelsEl.innerHTML='';
+  fam.levels.forEach(l=>{
+    const b=document.createElement('button');
+    b.className='chip'+(l.id===S.level?' on':'');b.dataset.id=l.id;b.textContent=l.chip;
+    b.addEventListener('click',()=>{
+      S.level=l.id;S.course=l.v;courseEl.value=l.v;
+      levelsEl.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x.dataset.id===l.id));
+      showHint();render();
+    });
+    levelsEl.appendChild(b);
+  });
+}
+COURSES.forEach(f=>{
+  const b=document.createElement('button');
+  b.className='chip'+(f.id===S.fam?' on':'');b.dataset.id=f.id;b.textContent=f.label;
+  b.addEventListener('click',()=>{
+    S.fam=f.id;S.level=f.levels[0].id;S.course=f.levels[0].v;courseEl.value=S.course;
+    famsEl.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x.dataset.id===f.id));
+    drawLevels();showHint();
+    /* Kids — это почти всегда 6–12; возраст потом можно поменять руками */
+    if(f.defaultAge){S.age=f.defaultAge;ageEl.value=S.age;syncAge();}
+    render();
+  });
+  famsEl.appendChild(b);
+});
+drawLevels();showHint();
+/* поле остаётся редактируемым: правка руками снимает выбор уровня */
+courseEl.addEventListener('input',e=>{
+  S.course=e.target.value;
+  const hit=COURSES.flatMap(f=>f.levels).find(l=>l.v===S.course);
+  S.level=hit?hit.id:null;
+  levelsEl.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x.dataset.id===S.level));
+  showHint();render();
+});
+
+/* ---------- панель: возраст ---------- */
+const agesEl=document.getElementById('ages'), ageEl=document.getElementById('fAge'),
+      ageHint=document.getElementById('ageHint');
+function syncAge(){
+  agesEl.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x.dataset.v===S.age));
+  const l=ledeFor(S.age);
+  ageHint.innerHTML=l?('Подзаголовок: «<b>'+l+'</b>»'):'Подзаголовок скрыт';
+  render();
+}
+AGES.forEach(a=>{
+  const b=document.createElement('button');
+  b.className='chip';b.dataset.v=a.v;b.textContent=a.chip;
+  b.addEventListener('click',()=>{S.age=a.v;ageEl.value=a.v;syncAge();});
+  agesEl.appendChild(b);
+});
+ageEl.addEventListener('input',e=>{S.age=e.target.value;syncAge();});
+
+/* ---------- панель: время ---------- */
+const timeEl=document.getElementById('fTime'), endHint=document.getElementById('endHint');
+function syncTime(){
+  S.time=timeEl.value||'16:00';
+  const e=endTime(S.time);
+  endHint.textContent=`${LESSON_MIN} минут → ${e||'—'}`;
+  render();
+}
+timeEl.addEventListener('input',syncTime);
+
+/* ---------- панель: остальное ---------- */
+document.querySelectorAll('.step button').forEach(b=>b.addEventListener('click',()=>{
+  if('t' in b.dataset){S.total=Math.max(2,Math.min(8,S.total+ +b.dataset.t));S.free=Math.min(S.free,S.total);}
+  else if('w' in b.dataset){S.wait=Math.max(0,Math.min(30,S.wait+ +b.dataset.w));}
+  else S.free=Math.max(0,Math.min(S.total,S.free+ +b.dataset.f));
+  document.getElementById('freeVal').textContent=S.free;
+  document.getElementById('totalVal').textContent=S.total;
+  document.getElementById('waitVal').textContent=S.wait;
+  render();
+}));
+[['fPrice','price'],['fPer','per']].forEach(([id,k])=>
+  document.getElementById(id).addEventListener('input',e=>{S[k]=e.target.value;render();}));
+
+/* ---------- экспорт ---------- */
+function save(name,cv){
+  return new Promise(res=>(cv||off).toBlob(b=>{
+    const u=URL.createObjectURL(b),a=document.createElement('a');
+    a.href=u;a.download=name;
+    document.body.appendChild(a);a.click();
+    setTimeout(()=>{URL.revokeObjectURL(u);a.remove();res();},600);
+  },'image/png'));
+}
+document.getElementById('dl').addEventListener('click',()=>
+  save(`sevenine_seats_${S.free}_of_${S.total}_${S.theme}.png`));
+
+document.getElementById('dlAll').addEventListener('click',async()=>{
+  const keep=S.theme;
+  for(const id of THEME_IDS){
+    S.theme=id;render();
+    await save(`sevenine_seats_${S.free}_of_${S.total}_${id}.png`);
+  }
+  S.theme=keep;render();
+});
+
+/* ==================== ФОТО-СТОРИС ==================== */
+const offP=document.createElement('canvas');offP.width=W;offP.height=H;
+const pctx=offP.getContext('2d');
+
+const TINTS=[
+  {id:'blue',  name:'Синий',  top:'8,46,100', bot:'4,20,52'},
+  {id:'ocean', name:'Океан',  top:'14,78,116',bot:'6,34,64'},
+  {id:'night', name:'Ночь',   top:'12,16,26', bot:'3,5,11'}
+];
+const P={img:null,focus:50,tint:'blue',scrim:70,
+  kicker:'НАБОР ОТКРЫТ',
+  head:'Английский, который остаётся с ребёнком',
+  sub:'Первый урок — бесплатно'};
+
+function wrapAll(t,mw){
+  return String(t).split('\n').flatMap(part=>part.trim()?wrap(part,mw):['']);
+}
+function drawCover(im,focus){
+  const sc=Math.max(W/im.width,H/im.height);
+  const w=im.width*sc, h=im.height*sc;
+  ctx.drawImage(im,(W-w)/2,(H-h)*(focus/100),w,h);
+}
+/* пока фото не загружено — мягкая фирменная заглушка (она же обложка формата) */
+function placeholder(){
+  const g=ctx.createLinearGradient(0,0,W*0.6,H);
+  g.addColorStop(0,'#31577F');g.addColorStop(.45,'#3E7BA6');g.addColorStop(1,'#1E3450');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  [[0.24,0.26,360,'rgba(255,255,255,0.13)'],
+   [0.80,0.40,420,'rgba(140,205,255,0.16)'],
+   [0.48,0.68,460,'rgba(255,255,255,0.06)']].forEach(([px,py,r,c])=>{
+    const rg=ctx.createRadialGradient(W*px,H*py,10,W*px,H*py,r);
+    rg.addColorStop(0,c);rg.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.fillStyle=rg;ctx.fillRect(0,0,W,H);
+  });
+}
+
+/* блоки текста собираются снизу вверх; заголовок ужимается, если строк много */
+function buildText(maxW,hs){
+  const b=[];
+  if(P.kicker.trim()) b.push({k:'k',lines:[P.kicker.trim()],lh:40,gap:24});
+  font(hs,800);
+  const hl=wrapAll(P.head,maxW);
+  if(hl.join('').trim()) b.push({k:'h',lines:hl,lh:Math.round(hs*1.14),gap:20});
+  if(P.sub.trim()){font(31,500);b.push({k:'s',lines:wrapAll(P.sub,maxW),lh:44,gap:0});}
+  let h=0;b.forEach((x,i)=>{h+=x.lines.length*x.lh+(i<b.length-1?x.gap:0);});
+  return {blocks:b,h};
+}
+
+function renderPhoto(){
+  ctx=pctx;
+  const t=TINTS.find(x=>x.id===P.tint)||TINTS[0], a=P.scrim/100;
+
+  ctx.clearRect(0,0,W,H);
+  if(P.img) drawCover(P.img,P.focus); else placeholder();
+
+  /* фирменный градиент снизу */
+  const sc=ctx.createLinearGradient(0,H*0.28,0,H);
+  sc.addColorStop(0,   `rgba(${t.top},0)`);
+  sc.addColorStop(0.40,`rgba(${t.top},${(a*0.40).toFixed(3)})`);
+  sc.addColorStop(0.74,`rgba(${t.bot},${(a*0.82).toFixed(3)})`);
+  sc.addColorStop(1,   `rgba(${t.bot},${Math.min(a*1.02,0.97).toFixed(3)})`);
+  ctx.fillStyle=sc;ctx.fillRect(0,H*0.28,W,H*0.72);
+
+  /* лёгкая вуаль сверху, чтобы логотип читался на светлом фото */
+  const tp=ctx.createLinearGradient(0,0,0,H*0.24);
+  tp.addColorStop(0,`rgba(${t.bot},0.46)`);tp.addColorStop(1,`rgba(${t.bot},0)`);
+  ctx.fillStyle=tp;ctx.fillRect(0,0,W,H*0.24);
+
+  /* логотип — та же посадка, что и в сторис про места */
+  ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.save();ctx.shadowColor='rgba(3,12,28,0.50)';ctx.shadowBlur=22;ctx.shadowOffsetY=2;
+  font(30,800);ctx.fillStyle='#FFFFFF';tracked('SEVENINE',PAD,258,6);
+  ctx.restore();
+
+  /* текст прижат к низу, над зоной интерфейса Instagram */
+  const maxW=W-PAD*2, SAFE=250, TOP_LIMIT=430;
+  ctx.textBaseline='top';
+  let hs=84, t2=buildText(maxW,hs);
+  while(H-SAFE-t2.h<TOP_LIMIT && hs>52){hs-=4;t2=buildText(maxW,hs);}
+  let y=Math.max(TOP_LIMIT,H-SAFE-t2.h);
+  ctx.save();ctx.shadowColor='rgba(3,12,28,0.55)';ctx.shadowBlur=26;ctx.shadowOffsetY=3;
+  t2.blocks.forEach(b=>{
+    if(b.k==='k'){font(28,800);ctx.fillStyle='#A9D9FF';b.lines.forEach((l,j)=>tracked(l,PAD,y+j*b.lh,5));}
+    if(b.k==='h'){font(hs,800);ctx.fillStyle='#FFFFFF';b.lines.forEach((l,j)=>ctx.fillText(l,PAD,y+j*b.lh));}
+    if(b.k==='s'){font(31,500);ctx.fillStyle='rgba(255,255,255,0.82)';b.lines.forEach((l,j)=>ctx.fillText(l,PAD,y+j*b.lh));}
+    y+=b.lines.length*b.lh+b.gap;
+  });
+  ctx.restore();
+
+  const pv=document.getElementById('pPreview'),pc=pv.getContext('2d');
+  pc.clearRect(0,0,pv.width,pv.height);pc.drawImage(offP,0,0,pv.width,pv.height);
+}
+
+/* ---------- панель фото ---------- */
+const pName=document.getElementById('pName'), pPrev=document.getElementById('pPreview');
+function loadPhoto(f){
+  if(!f||!/^image\//.test(f.type)){pName.textContent='нужен файл-картинка';return;}
+  const url=URL.createObjectURL(f), im=new Image();
+  im.onload=()=>{P.img=im;URL.revokeObjectURL(url);
+    pName.textContent=`${f.name} · ${im.width}×${im.height}`;
+    renderPhoto();};
+  im.onerror=()=>{URL.revokeObjectURL(url);pName.textContent='не удалось открыть файл';};
+  im.src=url;
+}
+document.getElementById('pFile').addEventListener('change',e=>{
+  loadPhoto(e.target.files&&e.target.files[0]);e.target.value='';});
+
+['dragenter','dragover'].forEach(ev=>pPrev.addEventListener(ev,e=>{
+  e.preventDefault();pPrev.classList.add('drop');}));
+['dragleave','drop'].forEach(ev=>pPrev.addEventListener(ev,e=>{
+  e.preventDefault();pPrev.classList.remove('drop');}));
+pPrev.addEventListener('drop',e=>loadPhoto(e.dataTransfer&&e.dataTransfer.files[0]));
+
+const pTintsEl=document.getElementById('pTints');
+TINTS.forEach(t=>{
+  const b=document.createElement('button');
+  b.className='chip'+(t.id===P.tint?' on':'');b.dataset.id=t.id;b.textContent=t.name;
+  b.addEventListener('click',()=>{
+    P.tint=t.id;
+    pTintsEl.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x.dataset.id===t.id));
+    document.getElementById('pTintName').textContent=t.name;
+    renderPhoto();});
+  pTintsEl.appendChild(b);
+});
+document.getElementById('pFocus').addEventListener('input',e=>{
+  P.focus=+e.target.value;
+  document.getElementById('pFocusHint').textContent=
+    P.focus<34?'Виден верх фото':P.focus>66?'Виден низ фото':'По центру';
+  renderPhoto();});
+document.getElementById('pScrim').addEventListener('input',e=>{
+  P.scrim=+e.target.value;
+  document.getElementById('pScrimHint').textContent=P.scrim+'%';
+  renderPhoto();});
+[['pKicker','kicker'],['pHead','head'],['pSub','sub']].forEach(([id,k])=>
+  document.getElementById(id).addEventListener('input',e=>{P[k]=e.target.value;renderPhoto();}));
+
+document.getElementById('dlPhoto').addEventListener('click',()=>
+  save('sevenine_photo_story.png',offP));
+
+/* ==================== ПЕРЕКЛЮЧЕНИЕ ФОРМАТОВ ==================== */
+const VIEWS={home:'homeView',seats:'seatsView',photo:'photoView'};
+function go(v){
+  if(!VIEWS[v]) v='home';
+  Object.entries(VIEWS).forEach(([k,id])=>document.getElementById(id).hidden=(k!==v));
+  document.getElementById('back').hidden=(v==='home');
+  document.getElementById('actsSeats').hidden=(v!=='seats');
+  document.getElementById('actsPhoto').hidden=(v!=='photo');
+  document.getElementById('kicker').textContent=
+    v==='seats'?'Story · свободные места · 1080 × 1920':
+    v==='photo'?'Story · фото · 1080 × 1920':'Форматы сторис · 1080 × 1920';
+  if(location.hash.slice(1)!==(v==='home'?'':v)) location.hash=(v==='home'?'':v);
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('.fcard').forEach(c=>
+  c.addEventListener('click',()=>go(c.dataset.go)));
+document.getElementById('back').addEventListener('click',()=>go('home'));
+window.addEventListener('hashchange',()=>go(location.hash.slice(1)||'home'));
+
+(async()=>{try{await document.fonts.load("800 84px 'Plus Jakarta Sans'");await document.fonts.ready;}catch{}
+  syncAge();syncTime();          /* рисует сторис про места */
+  renderPhoto();
+  document.getElementById('thumbSeats').src=off.toDataURL();
+  document.getElementById('thumbPhoto').src=offP.toDataURL();
+  go(location.hash.slice(1)||'home');})();
+</script>
+</body>
+</html>
