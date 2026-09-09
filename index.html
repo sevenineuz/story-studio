@@ -82,6 +82,11 @@
   /* --- фото-сторис --- */
   .uploader{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
   .uploader .btn{display:inline-block}
+  /* input не прячем через display:none — иначе Safari на iOS не открывает выбор файла.
+     Он лежит прозрачным слоем поверх кнопки и сам ловит нажатие. */
+  .upload{position:relative;overflow:hidden;display:inline-block}
+  .upload input[type=file]{position:absolute;top:0;left:0;width:100%;height:100%;
+    opacity:0;cursor:pointer;font-size:0}
   .fname{font-size:12px;color:var(--dim);word-break:break-all}
   input[type=range]{width:100%;accent-color:var(--blue);background:none;border:0;padding:0}
   input[type=range]:focus{outline:none}
@@ -234,8 +239,9 @@
     <div class="grp col">
       <label>Фото<span class="sub">JPG или PNG; вертикальное подходит лучше всего</span></label>
       <div class="uploader">
-        <label class="btn" for="pFile">Загрузить фото</label>
-        <input type="file" id="pFile" accept="image/*" hidden>
+        <label class="btn upload">Загрузить фото
+          <input type="file" id="pFile" accept="image/*">
+        </label>
         <span class="fname" id="pName">файл не выбран</span>
       </div>
     </div>
@@ -261,7 +267,7 @@
       <div><span>Подпись — необязательно</span><input id="pSub" value="Первый урок — бесплатно"></div>
     </div>
 
-    <p class="hint">Фото можно просто перетащить на превью слева.</p>
+    <p class="hint">На компьютере фото можно просто перетащить на превью.</p>
   </div>
 </div>
 
