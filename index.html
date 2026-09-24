@@ -814,24 +814,45 @@ document.querySelectorAll('.step button').forEach(b=>b.addEventListener('click',
   document.getElementById(id).addEventListener('input',e=>{S[k]=e.target.value;render();}));
 
 /* ---------- экспорт ---------- */
-function save(name,cv){
-  return new Promise(res=>(cv||off).toBlob(b=>{
-    const u=URL.createObjectURL(b),a=document.createElement('a');
-    a.href=u;a.download=name;
+/* iPhone/iPad: ссылка-скачивание кладёт PNG в «Файлы», а не в «Фото».
+   Поэтому там открываем меню «Поделиться» — в нём есть «Сохранить изображение».
+   На Android скачанные картинки и так видны в галерее (альбом «Загрузки»). */
+const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||
+  (navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+function pngFile(name,cv){
+  /* синхронно: share() должен вызываться в том же нажатии, без await до него */
+  const bin=atob((cv||off).toDataURL('image/png').split(',')[1]), u8=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) u8[i]=bin.charCodeAt(i);
+  return new File([u8],name,{type:'image/png'});
+}
+function download(f){
+  return new Promise(res=>{
+    const u=URL.createObjectURL(f),a=document.createElement('a');
+    a.href=u;a.download=f.name;
     document.body.appendChild(a);a.click();
     setTimeout(()=>{URL.revokeObjectURL(u);a.remove();res();},600);
-  },'image/png'));
+  });
 }
+async function saveFiles(files){
+  if(IOS&&navigator.canShare&&navigator.canShare({files})){
+    try{await navigator.share({files});return;}
+    catch(e){if(e.name==='AbortError') return;}   /* закрыли меню — ничего не делаем */
+  }
+  for(const f of files) await download(f);
+}
+function save(name,cv){return saveFiles([pngFile(name,cv)]);}
+
 document.getElementById('dl').addEventListener('click',()=>
   save(`sevenine_seats_${S.free}_of_${S.total}_${S.theme}.png`));
 
-document.getElementById('dlAll').addEventListener('click',async()=>{
-  const keep=S.theme;
+document.getElementById('dlAll').addEventListener('click',()=>{
+  const keep=S.theme, files=[];
   for(const id of THEME_IDS){
     S.theme=id;render();
-    await save(`sevenine_seats_${S.free}_of_${S.total}_${id}.png`);
+    files.push(pngFile(`sevenine_seats_${S.free}_of_${S.total}_${id}.png`));
   }
   S.theme=keep;render();
+  saveFiles(files);
 });
 
 /* ==================== ФОТО-СТОРИС ==================== */
