@@ -8,6 +8,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+  /* Mont для обложек Reels — тот же шрифт, что в исходном файле обложек.
+     Веса у Mont нестандартные: 600 = Regular, 700 = SemiBold, 800 = Bold. */
+  @font-face{font-family:'SevMont';font-weight:600;font-display:block;src:url('fonts/mont-600.woff2') format('woff2')}
+  @font-face{font-family:'SevMont';font-weight:700;font-display:block;src:url('fonts/mont-700.woff2') format('woff2')}
+  @font-face{font-family:'SevMont';font-weight:800;font-display:block;src:url('fonts/mont-800.woff2') format('woff2')}
   :root{--ink:#0A0D13;--line:rgba(255,255,255,.10);--txt:#E8ECF2;--dim:#8A93A2;--blue:#007AFF;--blue-dark:#0062CC}
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Plus Jakarta Sans',-apple-system,sans-serif;background:var(--ink);color:var(--txt);
@@ -70,11 +75,14 @@
   .home{max-width:1040px;margin:0 auto;padding:44px 26px 90px}
   .home h1{font-size:30px;font-weight:800;letter-spacing:-.7px;margin-bottom:8px}
   .home .sub{color:var(--dim);font-size:14px;margin-bottom:32px}
+  .fsec{margin-bottom:44px}
+  .fsec h2{font-size:19px;font-weight:800;letter-spacing:-.3px;margin-bottom:4px}
+  .fsec .fsub{font-size:13px;color:var(--dim);margin-bottom:18px}
   .fcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:22px}
   .fcard{display:block;text-align:left;background:rgba(255,255,255,.03);border:1px solid var(--line);
     border-radius:22px;padding:16px;cursor:pointer;color:var(--txt);font-family:inherit}
   .fcard:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.22)}
-  .fthumb{display:block;border-radius:14px;overflow:hidden;background:#0f141c;aspect-ratio:9/16}
+  .fthumb{display:flex;align-items:center;border-radius:14px;overflow:hidden;background:#0f141c;aspect-ratio:9/16}
   .fthumb img{width:100%;display:block}
   .ftitle{display:block;font-size:16px;font-weight:700;margin:14px 0 5px}
   .fdesc{display:block;font-size:12.5px;line-height:1.55;color:var(--dim)}
@@ -138,7 +146,7 @@
 <header>
   <div class="brand">SEVE<i>NINE</i></div>
   <button class="btn ghost" id="back" hidden><span class="lg">← Форматы</span><span class="sm">←</span></button>
-  <div class="kicker" id="kicker">Форматы сторис · 1080 × 1920</div>
+  <div class="kicker" id="kicker">Форматы · Sevenine</div>
   <div class="acts" id="actsSeats" hidden>
     <button class="btn ghost" id="dlAll"><span class="lg">Все темы</span><span class="sm">Темы</span></button>
     <button class="btn" id="dl"><span class="lg">Скачать PNG</span><span class="sm">PNG</span></button>
@@ -146,16 +154,22 @@
   <div class="acts" id="actsPhoto" hidden>
     <button class="btn" id="dlPhoto"><span class="lg">Скачать PNG</span><span class="sm">PNG</span></button>
   </div>
+  <div class="acts" id="actsReels" hidden>
+    <button class="btn" id="dlReels"><span class="lg">Скачать PNG</span><span class="sm">PNG</span></button>
+  </div>
 </header>
 
 <div class="home" id="homeView" hidden>
-  <h1>Сторис Sevenine</h1>
+  <h1>Сторис и обложки Sevenine</h1>
   <p class="sub">Выберите формат — дальше всё заполняется в пару кликов.</p>
+  <section class="fsec">
+  <h2>Сторис</h2>
+  <p class="fsub">1080 × 1920 · для сторис Instagram</p>
   <div class="fcards">
     <button class="fcard" data-go="seats">
       <span class="fthumb"><img id="thumbSeats" alt=""></span>
       <span class="ftitle">Свободные места</span>
-      <span class="fdesc">Сетка мест, расписание и цена. Пять тем и отдельное состояние «мест нет» с листом ожидания.</span>
+      <span class="fdesc">Сетка мест, расписание и цена. Семь тем и отдельное состояние «мест нет» с листом ожидания.</span>
     </button>
     <button class="fcard" data-go="photo">
       <span class="fthumb"><img id="thumbPhoto" alt=""></span>
@@ -163,6 +177,29 @@
       <span class="fdesc">Ваше фото на весь экран, фирменный градиент снизу, логотип и текст в стиле Sevenine.</span>
     </button>
   </div>
+  </section>
+
+  <section class="fsec">
+  <h2>Обложки Reels</h2>
+  <p class="fsub">Главный текст стоит внутри квадрата, который виден в сетке профиля</p>
+  <div class="fcards">
+    <button class="fcard" data-go="reels-standard">
+      <span class="fthumb"><img id="thumbReels-standard" alt=""></span>
+      <span class="ftitle">Заголовок</span>
+      <span class="fdesc">Фото и крупный заголовок, нужные слова — синим.</span>
+    </button>
+    <button class="fcard" data-go="reels-ielts">
+      <span class="fthumb"><img id="thumbReels-ielts" alt=""></span>
+      <span class="ftitle">Балл IELTS</span>
+      <span class="fdesc">Результат ученика: огромный балл, подпись и красная плашка IELTS.</span>
+    </button>
+    <button class="fcard" data-go="reels-shop">
+      <span class="fthumb"><img id="thumbReels-shop" alt=""></span>
+      <span class="ftitle">Sevenine Shop</span>
+      <span class="fdesc">Приз ученика: имя, монеты и что купил. Пост 4:5 или 9:16.</span>
+    </button>
+  </div>
+  </section>
 </div>
 
 <div class="stage" id="seatsView" hidden>
@@ -265,6 +302,58 @@
       <div><span>Надзаголовок — необязательно</span><input id="pKicker" value="НАБОР ОТКРЫТ"></div>
       <div><span>Заголовок — Enter переносит строку</span><textarea id="pHead">Английский, который остаётся с ребёнком</textarea></div>
       <div><span>Подпись — необязательно</span><input id="pSub" value="Первый урок — бесплатно"></div>
+    </div>
+
+    <p class="hint">На компьютере фото можно просто перетащить на превью.</p>
+  </div>
+</div>
+
+<div class="stage" id="reelsView" hidden>
+  <div class="sticky"><canvas id="rPreview" width="432" height="768"></canvas></div>
+
+  <div class="panel">
+    <h1 id="rTitle">Reels: заголовок</h1>
+    <p class="lede">Фото на весь экран, логотип и крупный текст. Текст стоит внутри квадрата, который виден в сетке профиля.</p>
+
+    <div class="grp col" id="rSizeRow" hidden>
+      <label>Формат<span class="sub">Пост в ленту или сторис</span></label>
+      <div class="chips" id="rSizes"></div>
+    </div>
+
+    <div class="grp col">
+      <label>Фото<span class="sub">JPG, PNG или HEIC; вертикальное подходит лучше всего</span></label>
+      <div class="uploader">
+        <label class="btn upload">Загрузить фото
+          <input type="file" id="rFile" accept="image/*,.heic,.heif,image/heic,image/heif">
+        </label>
+        <span class="fname" id="rName">файл не выбран</span>
+      </div>
+    </div>
+
+    <div class="grp col">
+      <label>Кадрирование<span class="sub" id="rFocusHint">По центру</span></label>
+      <input type="range" id="rFocus" min="0" max="100" value="50">
+    </div>
+
+    <div class="grp">
+      <label>Квадрат сетки<span class="sub">Пунктир только в превью, в PNG его нет</span></label>
+      <button class="chip" id="rGuide">Показать</button>
+    </div>
+
+    <div class="fields" id="rfStandard">
+      <div><span>Заголовок — Enter переносит строку, [в скобках] — синим</span><textarea id="rHead">Говори свободно
+[за 6 месяцев]</textarea></div>
+    </div>
+    <div class="fields" id="rfIelts" hidden>
+      <div><span>Балл</span><input id="rScore" value="7.5"></div>
+      <div><span>Красная плашка</span><input id="rPill" value="IELTS"></div>
+      <div><span>Подпись над баллом — необязательно</span><input id="rCaption" value="Наш результат"></div>
+    </div>
+    <div class="fields" id="rfShop" hidden>
+      <div><span>Ученик</span><input id="rShopName" value="Азиза, 10"></div>
+      <div><span>Монеты</span><input id="rCoins" value="500"></div>
+      <div><span>Надпись над именем</span><input id="rShopLabel" value="Sevenine Shop"></div>
+      <div><span>Приз — синяя строка под именем</span><input id="rPrize" value="AirPods Pro"></div>
     </div>
 
     <p class="hint">На компьютере фото можно просто перетащить на превью.</p>
@@ -994,6 +1083,341 @@ document.getElementById('pScrim').addEventListener('input',e=>{
 document.getElementById('dlPhoto').addEventListener('click',()=>
   save('sevenine_photo_story.png',offP));
 
+/* ==================== ОБЛОЖКА REELS ==================== */
+/* своя область видимости: у обложки свои отступы, шрифт и высота холста */
+const REELS=(()=>{
+const RPAD=72, WHITE='#FFFFFF', LOGO_N='#2E93F6', ACCENT='#5AA9FF', RED='#FF3B30', GOLD='#F7B500';
+const MONT="'SevMont','Montserrat',sans-serif";
+let RH=1920;
+/* холст обязательно в документе: текст на отсоединённом холсте сглаживается чуть иначе,
+   и обложка перестаёт совпадать с исходником пиксель в пиксель */
+const cv=document.createElement('canvas');cv.width=W;cv.height=RH;cv.hidden=true;document.body.appendChild(cv);
+const ctx=cv.getContext('2d');
+const R={tpl:'standard',img:null,focal:50,shopSize:'post',guide:false};
+const TPLS={standard:'Reels: заголовок',ielts:'Reels: балл IELTS',shop:'Reels: Sevenine Shop'};
+const SIZES=[{id:'post',name:'Пост · 4:5'},{id:'story',name:'Сторис · 9:16'}];
+const $=id=>document.getElementById(id);
+const val=id=>$(id).value;
+const mf=(size,w)=>`${w} ${size}px ${MONT}`;
+const GT=()=>(RH-1080)/2, GB=()=>(RH+1080)/2;   /* верх и низ квадрата сетки */
+
+function rrect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+function shadow(c,b,oy){ctx.shadowColor=c;ctx.shadowBlur=b;ctx.shadowOffsetY=oy;}
+function noShadow(){ctx.shadowBlur=0;ctx.shadowOffsetY=0;}
+
+/* [слово в скобках] — синим */
+function tokenize(str){
+  const out=[]; const re=/\[([^\]]*)\]|([^\[]+)/g; let m;
+  while((m=re.exec(str))){
+    const seg=m[1]!==undefined?m[1]:m[2]; const acc=m[1]!==undefined;
+    seg.split(/\s+/).filter(Boolean).forEach(w=>out.push({w,accent:acc}));
+  } return out;
+}
+function tokW(t,size){ ctx.font=mf(size,t.accent?800:700); return ctx.measureText(t.w).width; }
+function spW(size){ ctx.font=mf(size,700); return ctx.measureText(' ').width; }
+function wrapTokens(tokens,maxW,size){
+  const lines=[]; let cur=[],curW=0; const s=spW(size);
+  for(const t of tokens){ const wW=tokW(t,size);
+    if(cur.length && curW+s+wW>maxW){ lines.push(cur); cur=[t]; curW=wW; }
+    else { curW += cur.length ? s+wW : wW; cur.push(t); } }
+  if(cur.length) lines.push(cur); return lines;
+}
+function layout(value,maxW,size){
+  let lines=[];
+  value.split('\n').forEach(raw=>{ const toks=tokenize(raw); if(!toks.length) return;
+    lines=lines.concat(wrapTokens(toks,maxW,size)); });
+  return lines;
+}
+function fitHeadline(value,maxW){
+  let size=118, lines;
+  for(;size>=66;size-=2){ lines=layout(value,maxW,size); if(lines.length<=2) return {size,lines}; }
+  for(size=66;size>=48;size-=2){ lines=layout(value,maxW,size); if(lines.length<=3) return {size,lines}; }
+  return {size:48, lines:layout(value,maxW,48)};
+}
+function fitText(value,maxW,base,min,maxLines){
+  let size=base,lines;
+  for(;size>=min;size-=2){ lines=layout(value,maxW,size); if(lines.length<=maxLines) return {size,lines}; }
+  return {size:min, lines:layout(value,maxW,min)};
+}
+function drawLines(lines,size,x,top,color,weight,lineH){
+  ctx.textAlign='left'; ctx.textBaseline='top'; ctx.font=mf(size,weight);
+  const sp=ctx.measureText(' ').width;
+  shadow('rgba(0,0,0,.5)',16,3); ctx.fillStyle=color;
+  lines.forEach((line,i)=>{ let cx=x; const ly=top+i*size*lineH;
+    for(const t of line){ ctx.fillText(t.w,cx,ly); cx+=ctx.measureText(t.w).width+sp; } });
+  noShadow();
+}
+
+function drawLogo(){
+  const txt='SEVENINE', size=46, track=5, y=GT()+78;
+  ctx.font=mf(size,800); ctx.textAlign='left'; ctx.textBaseline='alphabetic';
+  shadow('rgba(0,0,0,.45)',14,2);
+  let x=RPAD;
+  for(let i=0;i<txt.length;i++){ ctx.fillStyle=(i===4)?LOGO_N:WHITE; ctx.fillText(txt[i],x,y); x+=ctx.measureText(txt[i]).width+track; }
+  noShadow();
+}
+function drawPillTR(text,bg){
+  const t=(text||'').trim().toUpperCase(); if(!t) return;
+  const size=30, track=2.5, hgt=64, r=32, padX=34, cy=GT()+78;
+  ctx.font=mf(size,800);
+  let tw=0; for(const ch of t) tw+=ctx.measureText(ch).width+track; tw-=track;
+  const pw=tw+padX*2, px=W-RPAD-pw, py=cy-hgt/2;
+  shadow('rgba(0,0,0,.3)',16,4);
+  rrect(px,py,pw,hgt,r); ctx.fillStyle=bg; ctx.fill();
+  noShadow();
+  ctx.fillStyle=WHITE; ctx.textAlign='left'; ctx.textBaseline='middle';
+  let x=px+padX; for(const ch of t){ ctx.fillText(ch,x,cy+1); x+=ctx.measureText(ch).width+track; }
+}
+function drawHeadline(){
+  const maxW=W-RPAD*2;
+  const {size,lines}=fitHeadline(val('rHead')||' ',maxW);
+  const lineStep=size*1.12, headTop=(GB()-44)-lines.length*lineStep;
+  ctx.textAlign='left'; ctx.textBaseline='top';
+  shadow('rgba(0,0,0,.5)',18,3);
+  lines.forEach((line,i)=>{
+    let x=RPAD; const ly=headTop+i*lineStep;
+    for(const t of line){
+      ctx.font=mf(size,t.accent?800:700);
+      ctx.fillStyle=t.accent?ACCENT:WHITE;
+      ctx.fillText(t.w,x,ly);
+      x+=ctx.measureText(t.w).width+spW(size);
+    }
+  });
+  noShadow();
+}
+function drawScore(){
+  const num=val('rScore').trim(), cap=val('rCaption').trim();
+  const maxW=W-RPAD*2, BOTTOM=GB()-40;
+  ctx.textAlign='center';
+  let numSize=360; ctx.font=mf(numSize,800);
+  while(ctx.measureText(num).width>maxW && numSize>120){ numSize-=8; ctx.font=mf(numSize,800); }
+  const capSize=54, numVisH=numSize*0.72, capVisH=cap?capSize*0.9:0, gap=cap?32:0;
+  const numMid=BOTTOM-numVisH/2, capMid=numMid-numVisH/2-gap-capVisH/2;
+  ctx.textBaseline='middle';
+  if(cap){
+    ctx.font=mf(capSize,700); ctx.fillStyle=WHITE;
+    shadow('rgba(0,0,0,.5)',16,3); ctx.fillText(cap,W/2,capMid); noShadow();
+  }
+  ctx.font=mf(numSize,800); ctx.fillStyle=ACCENT;
+  shadow('rgba(0,0,0,.55)',28,6); ctx.fillText(num,W/2,numMid); noShadow();
+}
+function drawCoinPill(coins){
+  const c=(coins||'').trim(); if(!c) return;
+  const size=34, hgt=68, r=34, padX=30, gap=14, coinR=21, cy=GT()+78;
+  ctx.font=mf(size,800);
+  const numW=ctx.measureText(c).width;
+  const pw=padX+coinR*2+gap+numW+padX, px=W-RPAD-pw, py=cy-hgt/2;
+  shadow('rgba(0,0,0,.3)',16,4);
+  rrect(px,py,pw,hgt,r); ctx.fillStyle=GOLD; ctx.fill();
+  noShadow();
+  /* монета */
+  const ccx=px+padX+coinR, ccy=cy;
+  ctx.beginPath(); ctx.arc(ccx,ccy,coinR,0,7); ctx.fillStyle='#D8940C'; ctx.fill();
+  ctx.beginPath(); ctx.arc(ccx,ccy,coinR-6,0,7); ctx.lineWidth=3; ctx.strokeStyle='#F7B500'; ctx.stroke();
+  ctx.fillStyle='#5A3D00'; ctx.font=mf(22,800); ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('S',ccx,ccy+1);
+  /* число */
+  ctx.fillStyle='#2A1E00'; ctx.font=mf(size,800); ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.fillText(c, ccx+coinR+gap, cy+1);
+}
+function drawShop(){
+  const maxW=W-RPAD*2, BB=GB()-44;
+  const pf=fitText('→ '+val('rPrize').trim(),maxW,74,44,2);
+  const pTop=BB-pf.lines.length*pf.size*1.08;
+  drawLines(pf.lines,pf.size,RPAD,pTop,ACCENT,800,1.08);
+  const nf=fitText(val('rShopName')||' ',maxW,116,60,2);
+  const nTop=pTop-20-nf.lines.length*nf.size*1.05;
+  drawLines(nf.lines,nf.size,RPAD,nTop,WHITE,800,1.05);
+  const label=val('rShopLabel').trim();
+  if(label){
+    ctx.font=mf(30,800); ctx.textAlign='left'; ctx.textBaseline='alphabetic'; ctx.fillStyle=GOLD;
+    shadow('rgba(0,0,0,.45)',12,2);
+    let x=RPAD; for(const ch of label.toUpperCase()){ ctx.fillText(ch,x,nTop-20); x+=ctx.measureText(ch).width+3; }
+    noShadow();
+  }
+}
+
+/* thumb=true — без подсказки «загрузите фото», для карточки на главной */
+function render(thumb){
+  ctx.clearRect(0,0,W,RH);
+  if(R.img){
+    const iw=R.img.width, ih=R.img.height;
+    const s=Math.max(W/iw,RH/ih), dw=iw*s, dh=ih*s, maxShift=(dh-RH)/2;
+    ctx.drawImage(R.img,(W-dw)/2,(RH-dh)/2-((R.focal-50)/50)*maxShift,dw,dh);
+  }else{
+    const bg=ctx.createLinearGradient(0,0,W*0.4,RH);
+    bg.addColorStop(0,'#8C97A6'); bg.addColorStop(1,'#5E6A7A');
+    ctx.fillStyle=bg; ctx.fillRect(0,0,W,RH);
+    if(thumb!==true){
+      ctx.fillStyle='rgba(255,255,255,.5)'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.font=mf(42,700); ctx.fillText('Загрузите фото обложки',W/2,RH*0.4);
+      ctx.font=mf(28,600); ctx.fillText('чтобы увидеть превью',W/2,RH*0.4+56);
+    }
+  }
+  const g=ctx.createLinearGradient(0,0,0,RH);
+  [[0,.34],[.18,.06],[.46,.02],[.66,.34],[.85,.66],[1,.86]].forEach(([p,a])=>g.addColorStop(p,`rgba(0,0,0,${a})`));
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,RH);
+  const vig=ctx.createRadialGradient(W/2,RH*0.45,RH*0.30,W/2,RH*0.55,RH*0.86);
+  vig.addColorStop(0,'rgba(0,0,0,0)'); vig.addColorStop(1,'rgba(0,0,0,0.22)');
+  ctx.fillStyle=vig; ctx.fillRect(0,0,W,RH);
+
+  drawLogo();
+  if(R.tpl==='ielts'){ drawPillTR(val('rPill')||'IELTS',RED); drawScore(); }
+  else if(R.tpl==='shop'){ drawCoinPill(val('rCoins')); drawShop(); }
+  else drawHeadline();
+
+  /* превью + пунктир квадрата сетки (в PNG не попадает) */
+  const pv=$('rPreview'), ph=Math.round(pv.width*RH/W);
+  if(pv.height!==ph) pv.height=ph;
+  const pc=pv.getContext('2d');
+  pc.clearRect(0,0,pv.width,pv.height); pc.drawImage(cv,0,0,pv.width,pv.height);
+  if(R.guide){
+    const k=pv.width/W;
+    pc.save(); pc.setLineDash([6,5]); pc.strokeStyle='rgba(255,255,255,.8)'; pc.lineWidth=1;
+    pc.strokeRect(.5,GT()*k+.5,pv.width-1,1080*k-1);
+    pc.fillStyle='rgba(255,255,255,.85)'; pc.font="700 9px 'Plus Jakarta Sans',sans-serif";
+    pc.textAlign='right'; pc.textBaseline='top'; pc.fillText('СЕТКА',pv.width-6,GT()*k+5);
+    pc.restore();
+  }
+}
+
+function applySize(){
+  RH=(R.tpl==='shop'&&R.shopSize==='post')?1350:1920;
+  cv.height=RH;
+  render();
+}
+function chips(el,list,cur,pick){
+  list.forEach(o=>{
+    const b=document.createElement('button');
+    b.className='chip'+(o.id===cur?' on':'');b.dataset.id=o.id;b.textContent=o.name;
+    b.addEventListener('click',()=>{
+      el.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x.dataset.id===o.id));
+      pick(o);
+    });
+    el.appendChild(b);
+  });
+}
+/* у каждого дизайна своя страница — здесь только переключаем поля */
+function setTpl(id,silent){
+  R.tpl=TPLS[id]?id:'standard'; $('rTitle').textContent=TPLS[R.tpl];
+  $('rfStandard').hidden=R.tpl!=='standard';
+  $('rfIelts').hidden=R.tpl!=='ielts';
+  $('rfShop').hidden=R.tpl!=='shop';
+  $('rSizeRow').hidden=R.tpl!=='shop';
+  RH=(R.tpl==='shop'&&R.shopSize==='post')?1350:1920; cv.height=RH;
+  if(!silent) render();
+}
+chips($('rSizes'),SIZES,R.shopSize,o=>{R.shopSize=o.id;applySize();});
+
+$('rGuide').addEventListener('click',e=>{
+  R.guide=!R.guide; e.currentTarget.classList.toggle('on',R.guide);
+  e.currentTarget.textContent=R.guide?'Скрыть':'Показать'; render();
+});
+$('rFocus').addEventListener('input',e=>{
+  R.focal=+e.target.value;
+  $('rFocusHint').textContent=R.focal<34?'Виден верх фото':R.focal>66?'Виден низ фото':'По центру';
+  render();
+});
+['rHead','rScore','rCaption','rPill','rShopName','rCoins','rShopLabel','rPrize'].forEach(id=>
+  $(id).addEventListener('input',render));
+
+/* ---------- фото: JPG / PNG / HEIC ----------
+   Safari открывает HEIC сам; Chrome и Firefox — нет, для них подгружаем libheif с CDN. */
+const HEIF_SRC='https://cdn.jsdelivr.net/npm/libheif-js@1.19.8/libheif-wasm/libheif-bundle.js';
+const MAX_DIM=2160;   /* для 1080 по ширине хватает с запасом, а память на 48 Мп не съедает */
+let heifLib=null, heifPending=null, photoURL=null;
+const isHeic=f=>/\.(heic|heif)$/i.test(f.name||'')||/^image\/hei[cf]/i.test(f.type||'');
+function getHeif(){
+  if(heifLib) return Promise.resolve(heifLib);
+  if(heifPending) return heifPending;
+  heifPending=(async()=>{
+    if(typeof libheif==='undefined'){
+      await new Promise((res,rej)=>{const el=document.createElement('script');
+        el.src=HEIF_SRC;el.async=true;el.onload=res;el.onerror=()=>rej(new Error('OFFLINE'));
+        document.head.appendChild(el);});
+      if(typeof libheif==='undefined') throw new Error('OFFLINE');
+    }
+    heifLib=(typeof libheif==='function')?await libheif():libheif;
+    return heifLib;
+  })();
+  heifPending.catch(()=>{heifPending=null;});   /* следующая попытка начнёт заново */
+  return heifPending;
+}
+async function decodeHeic(file){
+  const lib=await getHeif();
+  const imgs=new lib.HeifDecoder().decode(new Uint8Array(await file.arrayBuffer()));
+  if(!imgs||!imgs.length) throw new Error('NOIMAGE');
+  const im=imgs[0], w=im.get_width(), h=im.get_height();
+  const full=document.createElement('canvas'); full.width=w; full.height=h;
+  const fx=full.getContext('2d'), id=fx.createImageData(w,h);
+  await new Promise((res,rej)=>{ im.display(id,out=>out?res():rej(new Error('NOIMAGE'))); });
+  fx.putImageData(id,0,0);
+  try{ im.free&&im.free(); }catch(_){}
+  const sc=Math.min(1,MAX_DIM/Math.max(w,h));
+  if(sc===1) return full;
+  const small=document.createElement('canvas');
+  small.width=Math.round(w*sc); small.height=Math.round(h*sc);
+  small.getContext('2d').drawImage(full,0,0,small.width,small.height);
+  return small;
+}
+function toImage(src){
+  return new Promise((res,rej)=>{
+    const use=blob=>{
+      if(!blob) return rej(new Error('DECODE'));
+      const url=URL.createObjectURL(blob), img=new Image();
+      img.onload=()=>img.naturalWidth?res({img,url}):rej(new Error('DECODE'));
+      img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('DECODE'));};
+      img.src=url;
+    };
+    src instanceof Blob?use(src):src.toBlob(use,'image/jpeg',0.92);
+  });
+}
+async function usePhoto(f){
+  if(!f) return;
+  const nm=$('rName'); nm.textContent='читаю фото…';
+  try{
+    let r;
+    try{ r=await toImage(f); }
+    catch(e){
+      if(!isHeic(f)) throw new Error('UNSUPPORTED');
+      nm.textContent='конвертирую HEIC…';
+      r=await toImage(await decodeHeic(f));
+    }
+    if(photoURL) URL.revokeObjectURL(photoURL);
+    photoURL=r.url; R.img=r.img;
+    nm.textContent=`${f.name} · ${r.img.naturalWidth}×${r.img.naturalHeight}`;
+    render();
+  }catch(err){
+    console.error('[reels] photo failed:',err);
+    const c=String(err&&err.message||err);
+    nm.textContent=c==='OFFLINE'?'для HEIC нужен интернет — или сохраните фото как JPG'
+      :c==='NOIMAGE'?'этот HEIC не читается — сохраните его из «Фото» как JPG'
+      :c==='UNSUPPORTED'?'нужен JPG, PNG или HEIC'
+      :'не удалось открыть файл';
+  }
+}
+$('rFile').addEventListener('change',e=>{usePhoto(e.target.files&&e.target.files[0]);e.target.value='';});
+const rPrev=$('rPreview');
+['dragenter','dragover'].forEach(ev=>rPrev.addEventListener(ev,e=>{e.preventDefault();rPrev.classList.add('drop');}));
+['dragleave','drop'].forEach(ev=>rPrev.addEventListener(ev,e=>{e.preventDefault();rPrev.classList.remove('drop');}));
+rPrev.addEventListener('drop',e=>usePhoto(e.dataTransfer&&e.dataTransfer.files[0]));
+
+function fileName(){
+  const base=R.tpl==='ielts'?('IELTS_'+val('rScore'))
+            :R.tpl==='shop'?('Shop_'+val('rShopName'))
+            :(val('rHead')||'Sevenine');
+  const raw=base.replace(/[\[\]\n]/g,' ').trim().replace(/\s+/g,'_').replace(/[^\wЀ-ӿ.-]/g,'').slice(0,40)||'Sevenine';
+  return 'sevenine_reels_'+raw+'.png';
+}
+$('dlReels').addEventListener('click',()=>save(fileName(),cv));
+
+return {render,cv,setTpl};
+})();
+
 /* прилипающее превью должно стоять ровно под шапкой, а её высота плавает */
 const hdrEl=document.querySelector('header');
 const setHH=()=>document.documentElement.style.setProperty('--hh',hdrEl.offsetHeight+'px');
@@ -1001,16 +1425,21 @@ if(window.ResizeObserver) new ResizeObserver(setHH).observe(hdrEl);
 addEventListener('resize',setHH); addEventListener('orientationchange',setHH); setHH();
 
 /* ==================== ПЕРЕКЛЮЧЕНИЕ ФОРМАТОВ ==================== */
-const VIEWS={home:'homeView',seats:'seatsView',photo:'photoView'};
+const VIEWS={home:'homeView',seats:'seatsView',photo:'photoView',
+  'reels-standard':'reelsView','reels-ielts':'reelsView','reels-shop':'reelsView'};
 function go(v){
   if(!VIEWS[v]) v='home';
-  Object.entries(VIEWS).forEach(([k,id])=>document.getElementById(id).hidden=(k!==v));
+  const isReels=v.startsWith('reels-');
+  Object.values(VIEWS).forEach(id=>document.getElementById(id).hidden=(id!==VIEWS[v]));
+  if(isReels) REELS.setTpl(v.slice(6));
   document.getElementById('back').hidden=(v==='home');
   document.getElementById('actsSeats').hidden=(v!=='seats');
   document.getElementById('actsPhoto').hidden=(v!=='photo');
+  document.getElementById('actsReels').hidden=!isReels;
   document.getElementById('kicker').textContent=
     v==='seats'?'Story · свободные места · 1080 × 1920':
-    v==='photo'?'Story · фото · 1080 × 1920':'Форматы сторис · 1080 × 1920';
+    v==='photo'?'Story · фото · 1080 × 1920':
+    isReels?'Reels · обложка':'Форматы · Sevenine';
   if(location.hash.slice(1)!==(v==='home'?'':v)) location.hash=(v==='home'?'':v);
   window.scrollTo(0,0);setHH();
 }
@@ -1019,11 +1448,15 @@ document.querySelectorAll('.fcard').forEach(c=>
 document.getElementById('back').addEventListener('click',()=>go('home'));
 window.addEventListener('hashchange',()=>go(location.hash.slice(1)||'home'));
 
-(async()=>{try{await document.fonts.load("800 84px 'Plus Jakarta Sans'");await document.fonts.ready;}catch{}
+(async()=>{try{await Promise.all([document.fonts.load("800 84px 'Plus Jakarta Sans'"),
+    document.fonts.load("700 100px 'SevMont'"),document.fonts.load("800 100px 'SevMont'"),document.fonts.load("600 100px 'SevMont'")]);
+  await document.fonts.ready;}catch{}
   syncAge();syncTime();          /* рисует сторис про места */
   renderPhoto();
   document.getElementById('thumbSeats').src=off.toDataURL();
   document.getElementById('thumbPhoto').src=offP.toDataURL();
+  ['standard','ielts','shop'].forEach(id=>{REELS.setTpl(id,true);REELS.render(true);
+    document.getElementById('thumbReels-'+id).src=REELS.cv.toDataURL();});
   go(location.hash.slice(1)||'home');})();
 </script>
 </body>
